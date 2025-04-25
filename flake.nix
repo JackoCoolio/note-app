@@ -14,22 +14,19 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];
       perSystem = {
-        config,
-        self',
         inputs',
         pkgs,
-        system,
+        self',
         ...
       }: let
-        rustToolchainFile = (pkgs.lib.importTOML ./rust-toolchain.toml).toolchain;
-        rustToolchain = (
-          inputs'.fenix.packages.fromToolchainName {
-            name = rustToolchainFile.channel;
-            sha256 = "sha256-AJ6LX/Q/Er9kS15bn9iflkUwcgYqRQxiOIL2ToVAXaU=";
-          }
-        );
-        rust = rustToolchain.toolchain;
-        rustPlatform = pkgs.makeRustPlatform {inherit (rustToolchain) rustc cargo;};
+        rust = inputs'.fenix.packages.fromToolchainFile {
+          file = ./rust-toolchain.toml;
+          sha256 = "sha256-AJ6LX/Q/Er9kS15bn9iflkUwcgYqRQxiOIL2ToVAXaU=";
+        };
+        rustPlatform = pkgs.makeRustPlatform {
+          rustc = rust;
+          cargo = rust;
+        };
       in {
         packages.default = let
           packageDef = (pkgs.lib.importTOML ./Cargo.toml).package;
@@ -47,10 +44,10 @@
 
         devShells.default = pkgs.mkShell {
           # uncomment after running `cargo init`
-          # inputsFrom = [self'.packages.default];
+          inputsFrom = [self'.packages.default];
           nativeBuildInputs = [
-            rust
             pkgs.bacon
+            pkgs.wasm-pack
           ];
         };
 
