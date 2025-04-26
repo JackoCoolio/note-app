@@ -47,7 +47,7 @@
           inputsFrom = [self'.packages.default];
           nativeBuildInputs = [
             pkgs.bacon
-            pkgs.wasm-pack
+            pkgs.wasm-tools
           ];
         };
 

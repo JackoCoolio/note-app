@@ -1,0 +1,28 @@
+package tasks:plugin;
+
+interface types {
+    record metadata {
+        name: string,
+        version: string,
+    }
+
+    flags capabilities {
+        /// Foobar
+        note-provider,
+    }
+}
+
+world tasks {
+    import host: interface {
+        /// Example of some function that the plugin
+        /// host will provide.
+        get-number: func() -> s32;
+    }
+
+    export plugin: interface {
+        use types.{metadata, capabilities};
+
+        get-metadata: func() -> metadata;
+        get-capabilities: func() -> capabilities;
+    }
+}
